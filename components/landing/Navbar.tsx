@@ -5,19 +5,13 @@ import { Menu, X, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import ExpertFormDialog from "./ExpertFormDialog";
 
-const langs = [
-  { code: "fr", label: "FR" },
-  { code: "en", label: "EN" },
-  { code: "ar", label: "AR" },
-];
+
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
 
-  const currentLangLabel = langs.find((l) => l.code === i18n.language)?.label || "FR";
-  const nextLang = langs[(langs.findIndex((l) => l.code === i18n.language) + 1) % langs.length];
-
+  
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
@@ -35,28 +29,7 @@ const Navbar = () => {
 
        
            <div className="hidden md:flex items-center gap-3">
-        {/* Boutons langues visibles simultanément */}
-        <div className="flex gap-2">
-          {langs.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => {
-                i18n.changeLanguage(lang.code);
-                document.documentElement.setAttribute("dir", lang.code === "ar" ? "rtl" : "ltr");
-                document.documentElement.setAttribute("lang", lang.code);
-              }}
-              className={`px-4 py-1 rounded-full font-medium text-sm transition-all duration-200
-                ${
-                  i18n.language === lang.code
-                    ? "bg-primary text-primary-foreground shadow-lg scale-105"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
-                }`}
-            >
-              {lang.label}
-            </button>
-          ))}
-        </div>
-      
+  
         {/* Bouton CTA */}
         <button
           onClick={() => {

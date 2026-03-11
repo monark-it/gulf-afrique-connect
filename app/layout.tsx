@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "ResearchGuide - The Bridge of Scientific Excellence",
   description:
     "Access elite R&D talent and strategic expertise through a verified corridor, aligned with Qatar's National Vision 2030.",
+
+  icons: { icon: "/favicon.svg" }
 };
 
 export const viewport: Viewport = {
