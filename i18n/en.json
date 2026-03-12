@@ -130,7 +130,7 @@
     "required": "*",
     "errorRequired": "Please fill in the required fields.",
     "errorEmail": "Please enter a valid email.",
-    "successClient": "You will be among the first to access ResearchGuide. We will contact you very soon.",
-    "successTalent": "You will be among the first to access ResearchGuide. We will contact you very soon."
+    "successClient": "Thank you for signing up! You will be among the first to access ResearchGuide. We will contact you very soon.",
+    "successTalent": "Thank you for signing up! You will be among the first to access ResearchGuide. We will contact you very soon."
   }
 }

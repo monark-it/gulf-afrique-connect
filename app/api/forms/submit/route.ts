@@ -31,6 +31,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const recaptchaToken = body.recaptchaToken;
+    if (!recaptchaToken) {
+      return NextResponse.json({ error: "reCAPTCHA manquant" }, { status: 400 });
+    }
+    const verifyRes = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
+      { method: "POST" }
+    );
+    const verifyData = await verifyRes.json();
+    if (!verifyData.success) {
+      return NextResponse.json({ error: "reCAPTCHA invalide" }, { status: 400 });
+    }
     const safeName    = escapeHtml(name.trim());
     const safeEmail   = escapeHtml(email.trim());
     const safeOrg     = escapeHtml(organization.trim());

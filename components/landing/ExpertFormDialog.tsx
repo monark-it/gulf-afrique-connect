@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 
 interface ExpertFormDialogProps {
   type: "client" | "talent";
@@ -15,11 +16,12 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", organization: "", message: "" });
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!form.name.trim() || !form.email.trim() || !form.organization.trim() || !form.message.trim()) {
       toast.error(t("form.errorRequired"));
       return;
@@ -29,48 +31,70 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
       return;
     }
 
+    const recaptchaToken = recaptchaRef.current?.getValue();
+    if (!recaptchaToken) {
+    toast.error("Please confirm you are not a robot");
+    return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch("/api/forms/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-        type,                   
-        name: form.name,
-        email: form.email,           
-        organization: form.organization,
-        message: form.message,
-      }),
+          type,
+          name: form.name,
+          email: form.email,
+          organization: form.organization,
+          message: form.message,
+          recaptchaToken,
+        }),
       });
 
       if (!response.ok) {
         const error = await response.json();
         toast.error(error.error || "Failed to submit form");
+        recaptchaRef.current?.reset();
         return;
       }
 
       toast.success(type === "client" ? t("form.successClient") : t("form.successTalent"));
       setForm({ name: "", email: "", organization: "", message: "" });
+      recaptchaRef.current?.reset();
       setOpen(false);
     } catch (error) {
       console.error("Form submission error:", error);
       toast.error("An error occurred. Please try again.");
+      recaptchaRef.current?.reset();
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-background border-border">
-        <DialogHeader>
-          <DialogTitle className="font-display text-xl text-foreground">
+  const modal = open ? (
+    <>
+      {/* Overlay */}
+      <div
+        className="fixed inset-0 bg-black/50 z-[9998]"
+        onClick={() => setOpen(false)}
+      />
+
+      {/* Modal */}
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[90%] max-w-md bg-background border border-border rounded-2xl p-6 shadow-xl overflow-y-auto max-h-[90vh]">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-xl text-foreground">
             {type === "client" ? t("form.clientTitle") : t("form.talentTitle")}
-          </DialogTitle>
-        </DialogHeader>
+          </h2>
+          <button
+            onClick={() => setOpen(false)}
+            className="text-muted-foreground hover:text-foreground transition-colors text-xl leading-none"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div>
             <label className="font-body text-sm text-muted-foreground mb-1 block">
@@ -82,7 +106,6 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
               placeholder={type === "client" ? t("form.namePlaceholderClient") : t("form.namePlaceholderTalent")}
               maxLength={100}
               required
-              aria-required
             />
           </div>
           <div>
@@ -96,12 +119,12 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
               placeholder={t("form.emailPlaceholder")}
               maxLength={255}
               required
-              aria-required
             />
           </div>
           <div>
             <label className="font-body text-sm text-muted-foreground mb-1 block">
-              {type === "client" ? t("form.orgLabel") : t("form.orgLabelTalent")} <span className="text-primary">{t("form.required")}</span>
+              {type === "client" ? t("form.orgLabel") : t("form.orgLabelTalent")}{" "}
+              <span className="text-primary">{t("form.required")}</span>
             </label>
             <Input
               value={form.organization}
@@ -109,12 +132,12 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
               placeholder={type === "client" ? t("form.orgPlaceholderClient") : t("form.orgPlaceholderTalent")}
               maxLength={150}
               required
-              aria-required
             />
           </div>
           <div>
             <label className="font-body text-sm text-muted-foreground mb-1 block">
-              {type === "client" ? t("form.messageClient") : t("form.messageTalent")} <span className="text-primary">{t("form.required")}</span>
+              {type === "client" ? t("form.messageClient") : t("form.messageTalent")}{" "}
+              <span className="text-primary">{t("form.required")}</span>
             </label>
             <Textarea
               value={form.message}
@@ -123,19 +146,45 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
               maxLength={1000}
               rows={3}
               required
-              aria-required
             />
           </div>
+
+          <div className="flex justify-center">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+              theme="light"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold text-sm hover:bg-orange-light transition-colors shadow-orange disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {loading ? "Sending..." : (type === "client" ? t("form.submitClient") : t("form.submitTalent"))}
+            {loading
+              ? "Sending..."
+              : type === "client"
+              ? t("form.submitClient")
+              : t("form.submitTalent")}
           </button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
+  ) : null;
+
+  return (
+    <>
+      {/* Trigger */}
+      <span onClick={() => setOpen(true)} style={{ cursor: "pointer" }}>
+        {children}
+      </span>
+
+      {/* Portal: renders modal at document.body level */}
+      {typeof window !== "undefined" && modal
+        ? createPortal(modal, document.body)
+        : null}
+    </>
   );
 };
 
