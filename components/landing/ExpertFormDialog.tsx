@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -16,7 +16,7 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", organization: "", message: "" });
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,11 +31,11 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
       return;
     }
 
-    const recaptchaToken = recaptchaRef.current?.getValue();
-    if (!recaptchaToken) {
-    toast.error("Please confirm you are not a robot");
-    return;
+    if (!executeRecaptcha) {
+      toast.error("reCAPTCHA not ready");
+      return;
     }
+    const recaptchaToken = await executeRecaptcha("submit_form");
 
     setLoading(true);
     try {
@@ -55,18 +55,15 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
       if (!response.ok) {
         const error = await response.json();
         toast.error(error.error || "Failed to submit form");
-        recaptchaRef.current?.reset();
         return;
       }
 
       toast.success(type === "client" ? t("form.successClient") : t("form.successTalent"));
       setForm({ name: "", email: "", organization: "", message: "" });
-      recaptchaRef.current?.reset();
       setOpen(false);
     } catch (error) {
       console.error("Form submission error:", error);
       toast.error("An error occurred. Please try again.");
-      recaptchaRef.current?.reset();
     } finally {
       setLoading(false);
     }
@@ -146,14 +143,6 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
               maxLength={1000}
               rows={3}
               required
-            />
-          </div>
-
-          <div className="flex justify-center">
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-              theme="light"
             />
           </div>
 

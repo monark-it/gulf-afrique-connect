@@ -31,7 +31,7 @@
       { "title": "Scientific Specialization", "desc": "Specifically targeting PhDs and niche researchers." },
       { "title": "Elite Strategic Advisory", "desc": "Secure access to decision-makers and market vision." }
     ],
-    "corridorTitle": "Why the Morocco-Qatar Corridor?",
+    "corridorTitle": "Why the Africa–Qatar Corridor?",
     "corridorDesc": "We start with this strategic axis to validate the quality of academic vetting before regional expansion. Africa offers a strong and diverse pool of high-quality scientific talent, often multilingual (Arabic/English/French), while Gulf countries have a growing demand for expertise to support their large-scale development and innovation projects."
   },
   "problem": {
@@ -79,7 +79,7 @@
       { "title": "Vetted Label", "desc": "Rigorous 5-step verification ensuring academic excellence, technical mastery and cultural reliability." },
       { "title": "IP Compliance & Security", "desc": "Strict contractual management including Intellectual Property assignment to secure your investments." },
       { "title": "72h SLA Guarantee", "desc": "Commitment to rapid expert replacement within 72 hours if the profile doesn't match your expectations." },
-      { "title": "Bilingual Service", "desc": "Dedicated support in Arabic and English for cultural mediation and smooth project management." },
+      { "title": "Trilingual Service", "desc": "Dedicated support in Arabic, French, and English for cultural mediation and smooth project management." },
       { "title": "Research Showcase", "desc": "An exclusive feature allowing Elite clients to discover the next wave of emerging technologies." }
     ]
   },
@@ -97,11 +97,11 @@
   "cta": {
     "title": "Ready to accelerate your innovation?",
     "subtitle": "Join the scientific excellence corridor between Africa and the Gulf.",
-    "clientLabel": "Organizations (Gulf)",
-    "clientTitle": "Access elite African scientific expertise",
+    "clientLabel": "Organizations",
+    "clientTitle": "Access elite scientific expertise",
     "clientDesc": "Find PhDs, researchers and senior engineers for your strategic R&D projects.",
     "clientBtn": "Find an R&D Expert",
-    "talentLabel": "Talents (Africa)",
+    "talentLabel": "Talents",
     "talentTitle": "Showcase your expertise and join an elite network",
     "talentDesc": "Access international funding and premium opportunities in the Gulf.",
     "talentBtn": "Join the Network"

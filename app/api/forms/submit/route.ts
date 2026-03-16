@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       { method: "POST" }
     );
     const verifyData = await verifyRes.json();
-    if (!verifyData.success) {
+    if (!verifyData.success || verifyData.score < 0.5) {
       return NextResponse.json({ error: "reCAPTCHA invalide" }, { status: 400 });
     }
     const safeName    = escapeHtml(name.trim());
