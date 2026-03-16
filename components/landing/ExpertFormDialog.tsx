@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -18,9 +18,17 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
   const [form, setForm] = useState({ name: "", email: "", organization: "", message: "" });
   const { executeRecaptcha } = useGoogleReCaptcha();
   const { t } = useTranslation();
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
 
+  useEffect(() => {
+    if (executeRecaptcha) setRecaptchaReady(true);
+  }, [executeRecaptcha]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!recaptchaReady) {
+      toast.error("reCAPTCHA not ready yet. Please try again in a moment.");
+      return;
+    }
 
     if (!form.name.trim() || !form.email.trim() || !form.organization.trim() || !form.message.trim()) {
       toast.error(t("form.errorRequired"));
@@ -148,7 +156,7 @@ const ExpertFormDialog = ({ type, children }: ExpertFormDialogProps) => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={!recaptchaReady || loading}
             className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-body font-semibold text-sm hover:bg-orange-light transition-colors shadow-orange disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading
