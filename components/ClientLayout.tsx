@@ -16,7 +16,21 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
   }));
 
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}>
+    <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} >
+             <style>{`
+           .grecaptcha-badge {
+             bottom: 16px !important;
+             right: auto !important;
+             left: 16px !important;
+             width: 70px !important;
+             overflow: hidden !important;
+             transition: width 0.3s ease !important;
+           }
+           .grecaptcha-badge:hover {
+             width: 256px !important;
+           }
+         `}</style>
+
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>

@@ -10,6 +10,7 @@ import AdvantagesSection from "@/components/landing/AdvantagesSection";
 import FAQSection from "@/components/landing/FAQSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
+import AboutHistorySection from "@/components/landing/AboutHistorySection ";
 
 const Index = () => {
   const { i18n } = useTranslation();
@@ -25,6 +26,7 @@ const Index = () => {
       <ProcessSection />
       <FAQSection />
       <CTASection />
+      <AboutHistorySection />
       <Footer />
     </div>
   );

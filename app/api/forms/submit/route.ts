@@ -12,23 +12,46 @@ function escapeHtml(str: string) {
     .replace(/'/g, "&#039;");
 }
 
+async function sendToMake(payload: {
+  type: string;
+  name: string;
+  email: string;
+  organization: string;
+  address: string;
+  message: string;
+  source: string;  
+  submitted_at: string;
+}) {
+  const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.warn("Make_WEBHOOK_URL is not set — skipping Make.");
+    return;
+  }
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      console.error("Make webhook failed:", await res.text());
+    }
+  } catch (err) {
+    console.error("Make webhook error:", err);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { type, name, email, organization, message } = body;
-    if (!name?.trim() || !email?.trim() || !organization?.trim() || !message?.trim()) {
-      return NextResponse.json(
-        { error: 'All fields are required' },
-        { status: 400 }
-      );
-    }
+    const { type, name, email, organization, address, message, source } = body;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email address' },
-        { status: 400 }
-      );
+    if (!name?.trim() || !email?.trim() || !organization?.trim() || !message?.trim()) {
+      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
     const recaptchaToken = body.recaptchaToken;
@@ -43,13 +66,25 @@ export async function POST(request: NextRequest) {
     if (!verifyData.success || verifyData.score < 0.5) {
       return NextResponse.json({ error: "reCAPTCHA invalide" }, { status: 400 });
     }
+
     const safeName    = escapeHtml(name.trim());
     const safeEmail   = escapeHtml(email.trim());
     const safeOrg     = escapeHtml(organization.trim());
+    const safeAddress = escapeHtml(address?.trim() || "");
     const safeMessage = escapeHtml(message.trim());
 
-   
-    const { error: notifError } = await resend.emails.send({
+     const makePromise = sendToMake({
+      type,
+      name: safeName,
+      email: safeEmail,
+      organization: safeOrg,
+      address: safeAddress,
+      message: safeMessage,
+      source: source,
+      submitted_at: new Date().toISOString(),
+    });
+
+    const emailPromise = resend.emails.send({
       from: "onboarding@resend.dev",
       to: process.env.RECIPIENT_EMAIL!,
       replyTo: safeEmail,
@@ -92,6 +127,10 @@ export async function POST(request: NextRequest) {
               </td>
               <td style="padding: 10px 12px;">${safeOrg}</td>
             </tr>
+            <tr>
+              <td style="padding: 10px 12px; font-weight: bold; color: #555;">Adresse</td>
+              <td style="padding: 10px 12px;">${safeAddress}</td>
+            </tr>
             <tr style="background: #fafafa;">
               <td style="padding: 10px 12px; font-weight: bold; color: #555; vertical-align: top;">Message</td>
               <td style="padding: 10px 12px;">${safeMessage}</td>
@@ -105,21 +144,18 @@ export async function POST(request: NextRequest) {
       `,
     });
 
+
+    const [{ error: notifError }] = await Promise.all([emailPromise, makePromise]);
+
     if (notifError) {
       console.error('Notification email error:', notifError);
-      return NextResponse.json(
-        { error: 'Failed to send notification' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to send notification' }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
 
   } catch (error) {
     console.error('Form submission error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -14,7 +14,7 @@ const ProblemSection = () => {
   const solutions = t("problem.solutions", { returnObjects: true }) as string[];
 
   return (
-    <section className="py-24 bg-section-alt">
+    <section className="py-24 bg-section-alt" id="the-challenge">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16">
           <div>

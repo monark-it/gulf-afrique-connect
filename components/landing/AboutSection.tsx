@@ -36,15 +36,18 @@ const AboutSection = () => {
 
         <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2} variants={fadeUp}
           className="font-body text-primary font-semibold text-center max-w-2xl mx-auto mb-6">
-          {t("about.subtitle")}
+          An On-Demand Expertise Platform & Tech Scouting Hub 
         </motion.p>
         <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} variants={fadeUp}
           className="font-body text-muted-foreground text-center max-w-3xl mx-auto mb-16 leading-relaxed">
-          {t("about.description")}
+          <span className="font-semibold text-foreground">Research<span className="text-primary">Guide</span></span>, developed by{" "}
+          <strong className="text-foreground">MonarkIT</strong>, is an innovative solution designed to strengthen the innovation and R&D ecosystem by creating a verified corridor between Africa and the Gulf. Our mission is to import targeted scientific skills and global strategic knowledge, perfectly aligned with the pillars of Qatar's National Vision 2030, particularly human and economic development.
         </motion.p>
 
+
+        <div id="hybrid-model" className="scroll-mt-24">
         {/* Hybrid model */}
-        <motion.h3 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={4} variants={fadeUp}
+        <motion.h3  initial="hidden" whileInView="visible" viewport={{ once: true }} custom={4} variants={fadeUp}
           className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-3">
           {t("about.hybridTitle")}
         </motion.h3>
@@ -67,6 +70,7 @@ const AboutSection = () => {
               </motion.div>
             );
           })}
+        </div>
         </div>
 
         {/* Corridor section */}

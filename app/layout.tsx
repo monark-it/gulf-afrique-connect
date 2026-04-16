@@ -3,9 +3,11 @@ import Script from "next/script";
 import "../index.css";
 import ClientLayout from "@/components/ClientLayout";
 import ClientOnlyToaster from "@/components/ClientOnlyToaster";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import { ExpertFormModal } from "@/components/landing/ExpertFormDialog";
 
 export const metadata: Metadata = {
-  title: "ResearchGuide - The Bridge of Scientific Excellence",
+  title: "The Bridge of Scientific Excellence",
   description:
     "Access elite R&D talent and strategic expertise through a verified corridor, aligned with Qatar's National Vision 2030.",
   icons: { icon: "/favicon.svg" },
@@ -45,6 +47,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <ClientLayout>
           {children}
           <ClientOnlyToaster />
+          <WhatsAppButton />
+          <ExpertFormModal /> 
         </ClientLayout>
       </body>
     </html>

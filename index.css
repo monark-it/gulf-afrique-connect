@@ -16,6 +16,13 @@ body {
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-ping-slow {
+    @apply animate-ping;
+    animation-duration: 2s; 
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
