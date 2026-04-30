@@ -60,7 +60,7 @@ const FooterSection = () => {
         <div className="text-center md:text-left pt-7 min-w-[200px]">
           <p className="text-white font-semibold mb-3 text-lg">Quick Links</p>
           <ul className="space-y-2 text-sm text-white/70">
-            <li><a href="#about" className="hover:text-white">About Us</a></li>
+            <li><a href="#about-us" className="hover:text-white">About Us</a></li>
             <li><a href="#hybrid-model" className="hover:text-white">Introduction</a></li>
             <li><a href="#the-challenge" className="hover:text-white">The Challenge</a></li>
             <li><a href="#the-challenge" className="hover:text-white">The Solution</a></li>

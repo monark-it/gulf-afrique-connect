@@ -15,7 +15,7 @@ const AboutSection = () => {
   const hybridItems = t("about.hybridItems", { returnObjects: true }) as { title: string; desc: string }[];
 
   return (
-    <section id="about" className="py-24">
+    <section id="vision" className="py-24">
       <div className="container mx-auto px-4">
         {/* Main presentation */}
         <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={fadeUp}

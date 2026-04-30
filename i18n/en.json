@@ -4,9 +4,9 @@
     "process": "Process",
     "advantages": "Advantages",
     "faq": "FAQ",
-    "about": "About",
+    "vision": "Vision",
     "findExpert": "Join the Adventure",
-    "roots": "Roots"
+    "roots": "About Us"
   },
   "hero": {
     "badge": "On-Demand Expertise Platform",
@@ -20,7 +20,7 @@
     "h3": "IP Compliance & SLA"
   },
   "about": {
-    "label": "About Us",
+    "label": "Our Vision",
     "title": "ResearchGuide",
     "subtitle": "An On-Demand Expertise Platform & Tech Scouting Hub by <strong>MonarkIt</strong>.",
     "description": "ResearchGuide, developed by <strong>MonarkIt</strong>, is an innovative solution designed to strengthen the innovation and R&D ecosystem by creating a verified corridor between Africa and the Gulf. Our mission is to import targeted scientific skills and global strategic knowledge, perfectly aligned with the pillars of Qatar's National Vision 2030, particularly human and economic development.",
